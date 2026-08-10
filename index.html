@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Sameeksha 2026</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
@@ -26,9 +26,13 @@
     --krishna-soft:#F5D3D3;
     --line:#E4D9C2;
     --shadow: 0 10px 30px -12px rgba(18,34,43,0.18);
+    --sat: env(safe-area-inset-top, 0px);
+    --sab: env(safe-area-inset-bottom, 0px);
   }
 
-  *{margin:0;padding:0;box-sizing:border-box;}
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+
+  html{ -webkit-text-size-adjust:100%; }
 
   body{
     font-family:'Inter',sans-serif;
@@ -41,7 +45,6 @@
     background-attachment:fixed;
   }
 
-  /* subtle grain / paper texture */
   body::before{
     content:"";
     position:fixed; inset:0;
@@ -141,6 +144,7 @@
     background:#3EE6A0;
     box-shadow:0 0 0 0 rgba(62,230,160,0.6);
     animation:pulse 1.8s infinite;
+    flex-shrink:0;
   }
   .live-dot.loading{ background:#F0C888; box-shadow:0 0 0 0 rgba(240,200,136,0.6);}
   @keyframes pulse{
@@ -164,6 +168,7 @@
     cursor:pointer;
     letter-spacing:0.02em;
     transition:transform .15s ease, box-shadow .15s ease;
+    min-height:40px;
   }
   .refresh-btn:hover{ transform:translateY(-2px); box-shadow:0 6px 18px rgba(240,200,136,0.4); }
   .refresh-btn:active{ transform:translateY(0); }
@@ -171,7 +176,7 @@
     outline:3px solid var(--teal); outline-offset:2px;
   }
 
-  /* ===== NAV ===== */
+  /* ===== TOP NAV (desktop) ===== */
   .nav-tabs{
     display:flex;
     justify-content:center;
@@ -195,6 +200,7 @@
     font-family:'Inter',sans-serif;
     color:var(--ink-soft);
     transition:all .18s ease;
+    min-height:44px;
   }
   .nav-tab:hover{ background:var(--paper-2); color:var(--ink); }
   .nav-tab.active{
@@ -215,6 +221,10 @@
     box-shadow:var(--shadow);
     border:1px solid var(--line);
   }
+  .card-head{
+    display:flex; align-items:flex-start; justify-content:space-between; gap:14px;
+    margin-bottom:24px;
+  }
   .card h2{
     font-family:'Fraunces',serif;
     font-weight:640;
@@ -225,10 +235,10 @@
   .card .sub{
     color:var(--ink-soft);
     font-size:0.92rem;
-    margin-bottom:24px;
   }
+  .card-head .sub{ margin-bottom:0; }
 
-  /* ===== LEADERBOARD — signature element ===== */
+  /* ===== LEADERBOARD ===== */
   .leaderboard{ display:grid; gap:16px; }
   .river-row{
     position:relative;
@@ -283,6 +293,7 @@
     font-family:'JetBrains Mono',monospace;
     font-weight:800; font-size:0.9rem;
     box-shadow:inset 0 0 0 2px var(--line);
+    flex-shrink:0;
   }
   .river-row.leading .rank-badge{
     background:#F0C888; box-shadow:none; color:#16303B;
@@ -296,6 +307,7 @@
     background:rgba(255,255,255,0.75);
     padding:6px 14px;
     border-radius:999px;
+    flex-shrink:0;
   }
 
   .leader-strip{
@@ -322,9 +334,9 @@
     font-weight:800; font-size:1.02rem;
     display:flex; align-items:center; gap:8px;
   }
-  .swatch{ width:11px;height:11px;border-radius:3px; display:inline-block; }
+  .swatch{ width:11px;height:11px;border-radius:3px; display:inline-block; flex-shrink:0; }
 
-  /* ===== FILTERS ===== */
+  /* ===== FILTERS (desktop: inline row · mobile: bottom sheet, see media query) ===== */
   .filters{
     display:flex; gap:14px; margin-bottom:24px; flex-wrap:wrap;
   }
@@ -339,16 +351,50 @@
     padding:11px 14px;
     border:2px solid var(--line);
     border-radius:10px;
-    font-size:0.95rem;
+    font-size:16px; /* 16px avoids iOS Safari zoom-on-focus */
     font-family:'Inter',sans-serif;
     background:var(--paper);
     color:var(--ink);
     min-width:190px;
+    min-height:46px;
     transition:border-color .15s ease;
   }
   select:focus{ border-color:var(--teal); }
 
-  /* ===== RESULTS TABLE ===== */
+  .filter-trigger{
+    display:none; /* shown only on mobile */
+    align-items:center; gap:8px;
+    background:var(--paper-2);
+    border:2px solid var(--line);
+    color:var(--ink);
+    font-weight:700; font-size:0.86rem;
+    padding:10px 16px;
+    border-radius:999px;
+    cursor:pointer;
+    white-space:nowrap;
+    min-height:44px;
+  }
+  .filter-trigger .badge{
+    background:var(--teal); color:#fff;
+    font-family:'JetBrains Mono',monospace; font-size:0.72rem; font-weight:800;
+    border-radius:999px; padding:1px 7px; min-width:18px; text-align:center;
+  }
+
+  .sheet-backdrop{
+    display:none;
+    position:fixed; inset:0;
+    background:rgba(18,34,43,0.45);
+    z-index:60;
+    opacity:0;
+    transition:opacity .25s ease;
+  }
+  .sheet-backdrop.open{ display:block; opacity:1; }
+
+  .sheet-footer{
+    display:none;
+  }
+
+  /* ===== RESULTS TABLE (desktop) ===== */
   .results-table{ overflow-x:auto; }
   table{ width:100%; border-collapse:collapse; }
   th{
@@ -375,6 +421,7 @@
     width:30px; height:30px; border-radius:50%;
     font-family:'JetBrains Mono',monospace; font-weight:800; font-size:0.85rem;
     color:#fff;
+    flex-shrink:0;
   }
   .medal.p1{ background:linear-gradient(145deg,#F3C94D,#D6971A); box-shadow:0 3px 8px rgba(214,151,26,0.5);}
   .medal.p2{ background:linear-gradient(145deg,#CFCFCF,#9AA0A6); box-shadow:0 3px 8px rgba(154,160,166,0.5);}
@@ -405,11 +452,6 @@
   .result-card-event{ font-weight:800; font-size:1.02rem; }
   .result-card-meta{ margin-top:10px; display:flex; flex-wrap:wrap; gap:8px 16px; font-size:0.85rem; color:var(--ink-soft); }
   .result-card-meta b{ color:var(--ink); }
-
-  @media (max-width:680px){
-    .results-table{ display:none; }
-    .result-cards{ display:flex; }
-  }
 
   /* ===== CATEGORIES ===== */
   .category-grid{
@@ -442,6 +484,7 @@
     padding:8px 16px; border-radius:999px; border:2px solid var(--line);
     background:#fff; font-weight:700; font-size:0.82rem; cursor:pointer; color:var(--ink-soft);
     transition:all .15s ease;
+    min-height:40px;
   }
   .toggle-btn.active{ background:var(--ink); color:var(--paper); border-color:var(--ink); }
   .chart-container{ position:relative; height:420px; margin-top:10px; }
@@ -453,11 +496,150 @@
     font-size:0.85rem; font-style:italic; margin-top:20px;
   }
 
-  @media (max-width:768px){
-    .header{ padding:36px 20px 30px; }
-    .filters{ flex-direction:column; }
-    select{ min-width:100%; }
+  /* ===== BOTTOM TAB BAR (mobile only) ===== */
+  .bottom-nav{
+    display:none;
+  }
+
+  /* =========================================================
+     MOBILE / PORTRAIT LAYOUT — everything below re-flows the
+     app into a single-column, thumb-driven experience.
+     ========================================================= */
+  @media (max-width:680px){
+
+    body{ padding-bottom:calc(72px + var(--sab)); }
+
+    .container{ padding:16px 14px 24px; }
+
+    /* --- Header: compact --- */
+    .header{
+      padding:calc(20px + var(--sat)) 18px 22px;
+      border-radius:16px;
+      margin-bottom:14px;
+      text-align:left;
+    }
+    .eyebrow{ font-size:0.66rem; margin-bottom:8px; }
+    .header h1{ font-size:2.1rem; margin-bottom:8px; }
+    .header .tagline{ font-size:0.88rem; }
+    .status-row{
+      justify-content:flex-start;
+      margin-top:16px;
+      gap:8px;
+    }
+    .live-pill{ font-size:0.72rem; padding:6px 12px 6px 9px; }
+    .last-updated{ display:none; } /* redundant with pill on small screens */
+    .refresh-btn{
+      width:38px; height:38px; padding:0;
+      border-radius:50%;
+      font-size:1rem;
+      display:inline-flex; align-items:center; justify-content:center;
+    }
+    .refresh-btn .refresh-label{ display:none; }
+
+    /* --- Top tabs hidden, bottom bar takes over --- */
+    .nav-tabs{ display:none; }
+
+    .bottom-nav{
+      display:flex;
+      position:fixed;
+      left:0; right:0; bottom:0;
+      z-index:50;
+      background:#fff;
+      border-top:1px solid var(--line);
+      box-shadow:0 -8px 24px rgba(18,34,43,0.12);
+      padding:6px 6px calc(6px + var(--sab));
+      justify-content:space-around;
+    }
+    .bottom-tab{
+      flex:1;
+      display:flex; flex-direction:column; align-items:center; gap:3px;
+      background:none; border:none;
+      padding:8px 4px;
+      min-height:52px;
+      color:var(--ink-soft);
+      font-family:'Inter',sans-serif;
+      font-weight:700;
+      font-size:0.66rem;
+      border-radius:12px;
+      cursor:pointer;
+      transition:background .15s ease, color .15s ease;
+    }
+    .bottom-tab .icon{ font-size:1.25rem; line-height:1; }
+    .bottom-tab.active{ color:var(--teal-deep); background:var(--paper-2); }
+
+    .card{ padding:18px; border-radius:14px; margin-bottom:14px; }
+    .card-head{ flex-direction:column; align-items:stretch; gap:10px; }
+    .card h2{ font-size:1.32rem; }
+    .card .sub{ font-size:0.84rem; }
+
+    /* --- Leaderboard: stack points under name --- */
+    .river-row{ padding:14px 16px; }
     .river-content{ flex-wrap:wrap; }
+    .river-name{ font-size:1.02rem; gap:9px; }
+    .river-points{ font-size:1.12rem; padding:5px 12px; }
+    .leader-strip{ grid-template-columns:1fr 1fr; gap:9px; }
+    .leader-chip{ padding:11px 12px; }
+
+    /* --- Filters become a bottom sheet, opened via trigger --- */
+    .filter-trigger{ display:inline-flex; }
+    .filters{
+      display:flex !important; /* override inline row */
+      flex-direction:column;
+      position:fixed;
+      left:0; right:0; bottom:0;
+      margin:0;
+      background:#fff;
+      border-radius:20px 20px 0 0;
+      padding:10px 20px calc(20px + var(--sab));
+      box-shadow:0 -12px 40px rgba(18,34,43,0.25);
+      z-index:70;
+      transform:translateY(105%);
+      transition:transform .28s cubic-bezier(.22,.9,.3,1);
+      max-height:75vh;
+      overflow-y:auto;
+      gap:16px;
+    }
+    .filters.open{ transform:translateY(0); }
+    .filters::before{
+      content:"";
+      display:block;
+      width:40px; height:4px; border-radius:999px;
+      background:var(--line);
+      margin:2px auto 6px;
+    }
+    .filter-group select{ width:100%; }
+    .sheet-footer{
+      display:flex; gap:10px; margin-top:4px;
+    }
+    .sheet-footer button{
+      flex:1;
+      min-height:46px;
+      border-radius:12px;
+      font-weight:800;
+      font-size:0.88rem;
+      cursor:pointer;
+      border:2px solid var(--line);
+      background:#fff;
+      color:var(--ink);
+    }
+    .sheet-footer .apply-btn{
+      background:var(--ink); color:var(--paper); border-color:var(--ink);
+    }
+
+    /* --- Results: cards only, table hidden --- */
+    .results-table{ display:none; }
+    .result-cards{ display:flex; }
+
+    /* --- Categories: single column on narrow phones --- */
+    .category-grid{ grid-template-columns:1fr; gap:12px; }
+    .category-card{ padding:18px; }
+
+    /* --- Charts: shorter, toggle stays but tighter --- */
+    .chart-container{ height:270px; }
+    .toggle-btn{ flex:1; padding:9px 10px; font-size:0.78rem; }
+    .chart-toggle{ gap:6px; }
+
+    footer{ padding:16px 16px calc(16px + var(--sab)); }
   }
 </style>
 </head>
@@ -467,19 +649,19 @@
   <div class="header">
     <div class="eyebrow">⛲ House Championship · Live</div>
     <h1>Sameeksha 2026</h1>
-    <p class="tagline">Four in houses.Every point counts.</p>
+    <p class="tagline">Four in houses. Every point counts.</p>
     <div class="status-row">
       <span class="live-pill"><span id="liveDot" class="live-dot loading"></span><span id="statusText">Connecting…</span></span>
       <span class="last-updated">Last sync: <span id="lastUpdated">—</span></span>
-      <button class="refresh-btn" onclick="manualRefresh()">↻ Refresh now</button>
+      <button class="refresh-btn" onclick="manualRefresh()" aria-label="Refresh now"><span class="refresh-label">↻ Refresh now</span><span aria-hidden="true">↻</span></button>
     </div>
   </div>
 
   <nav class="nav-tabs">
-    <button class="nav-tab active" onclick="showTab('home', event)">🏠 Home</button>
-    <button class="nav-tab" onclick="showTab('results', event)">📋 Results</button>
-    <button class="nav-tab" onclick="showTab('categories', event)">🎯 Categories</button>
-    <button class="nav-tab" onclick="showTab('charts', event)">📈 Charts</button>
+    <button class="nav-tab active" data-tab="home" onclick="showTab('home')">🏠 Home</button>
+    <button class="nav-tab" data-tab="results" onclick="showTab('results')">📋 Results</button>
+    <button class="nav-tab" data-tab="categories" onclick="showTab('categories')">🎯 Categories</button>
+    <button class="nav-tab" data-tab="charts" onclick="showTab('charts')">📈 Charts</button>
   </nav>
 
   <div id="home" class="tab-content active">
@@ -495,9 +677,17 @@
 
   <div id="results" class="tab-content">
     <div class="card">
-      <h2>Results Viewer</h2>
-      <div class="sub">Every event, every house — filter to find what you're looking for</div>
-      <div class="filters">
+      <div class="card-head">
+        <div>
+          <h2>Results Viewer</h2>
+          <div class="sub">Every event, every house — filter to find what you're looking for</div>
+        </div>
+        <button class="filter-trigger" onclick="openFilterSheet()">
+          🔍 Filter <span class="badge" id="filterBadge" style="display:none;">0</span>
+        </button>
+      </div>
+
+      <div class="filters" id="filterSheet">
         <div class="filter-group">
           <label for="categoryFilter">🎓 Category</label>
           <select id="categoryFilter" onchange="filterResults()">
@@ -523,7 +713,12 @@
             <option value="">All Events</option>
           </select>
         </div>
+        <div class="sheet-footer">
+          <button type="button" onclick="clearFilters()">Clear</button>
+          <button type="button" class="apply-btn" onclick="closeFilterSheet()">Show results</button>
+        </div>
       </div>
+      <div class="sheet-backdrop" id="sheetBackdrop" onclick="closeFilterSheet()"></div>
 
       <div class="results-table">
         <table id="resultsTable">
@@ -567,6 +762,13 @@
 
 </div>
 
+<nav class="bottom-nav">
+  <button class="bottom-tab active" data-tab="home" onclick="showTab('home')"><span class="icon">🏠</span>Home</button>
+  <button class="bottom-tab" data-tab="results" onclick="showTab('results')"><span class="icon">📋</span>Results</button>
+  <button class="bottom-tab" data-tab="categories" onclick="showTab('categories')"><span class="icon">🎯</span>Categories</button>
+  <button class="bottom-tab" data-tab="charts" onclick="showTab('charts')"><span class="icon">📈</span>Charts</button>
+</nav>
+
 <footer>Made with 💖 Pranav</footer>
 
 <script>
@@ -593,19 +795,46 @@ function saveFilterState(){
   currentFilters.category = document.getElementById('categoryFilter').value;
   currentFilters.type = document.getElementById('typeFilter').value;
   currentFilters.event = document.getElementById('eventFilter').value;
+  updateFilterBadge();
 }
 function restoreFilterState(){
   document.getElementById('categoryFilter').value = currentFilters.category;
   document.getElementById('typeFilter').value = currentFilters.type;
   document.getElementById('eventFilter').value = currentFilters.event;
+  updateFilterBadge();
+}
+function updateFilterBadge(){
+  const count = [currentFilters.category, currentFilters.type, currentFilters.event].filter(Boolean).length;
+  const badge = document.getElementById('filterBadge');
+  if(!badge) return;
+  badge.textContent = count;
+  badge.style.display = count > 0 ? 'inline-block' : 'none';
+}
+function clearFilters(){
+  document.getElementById('categoryFilter').value = '';
+  document.getElementById('typeFilter').value = '';
+  document.getElementById('eventFilter').value = '';
+  filterResults();
 }
 
-function showTab(tabName, evt){
+/* ---- mobile filter sheet ---- */
+function openFilterSheet(){
+  document.getElementById('filterSheet').classList.add('open');
+  document.getElementById('sheetBackdrop').classList.add('open');
+}
+function closeFilterSheet(){
+  document.getElementById('filterSheet').classList.remove('open');
+  document.getElementById('sheetBackdrop').classList.remove('open');
+}
+
+/* ---- tab switching (drives both top tabs and bottom tab bar) ---- */
+function showTab(tabName){
   document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
-  document.querySelectorAll('.nav-tab').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.nav-tab, .bottom-tab').forEach(b=>b.classList.remove('active'));
   document.getElementById(tabName).classList.add('active');
-  if(evt && evt.target) evt.target.classList.add('active');
+  document.querySelectorAll(`[data-tab="${tabName}"]`).forEach(b=>b.classList.add('active'));
   if(tabName === 'charts') setTimeout(updateChart, 100);
+  window.scrollTo({top:0, behavior:'smooth'});
 }
 
 async function loadCSV(filename){
@@ -820,8 +1049,11 @@ function filterResults(){
     el.style.display = show ? '' : 'none';
     if(show && el.tagName==='TR') visibleCount++;
   });
+  // also count visible cards for the empty state (mobile has no <tr>s visible)
+  const visibleCards = document.querySelectorAll('#resultCards .result-card')
+    .length ? [...document.querySelectorAll('#resultCards .result-card')].filter(c=>c.style.display!=='none').length : 0;
 
-  document.getElementById('emptyState').style.display = visibleCount===0 ? 'block' : 'none';
+  document.getElementById('emptyState').style.display = (visibleCount===0 && visibleCards===0) ? 'block' : 'none';
 }
 
 function updateCategoryBreakdown(){
