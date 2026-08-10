@@ -321,6 +321,8 @@
     padding:14px 16px;
     background:var(--paper-2);
     border:1px solid var(--line);
+    min-width:0;
+    overflow:hidden;
   }
   .leader-chip .cat{
     font-family:'JetBrains Mono',monospace;
@@ -329,10 +331,19 @@
     text-transform:uppercase;
     color:var(--ink-soft);
     margin-bottom:6px;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
   }
   .leader-chip .who{
     font-weight:800; font-size:1.02rem;
-    display:flex; align-items:center; gap:8px;
+    display:flex; align-items:center; gap:6px;
+    flex-wrap:wrap;
+    min-width:0;
+  }
+  .leader-chip .who > span:not(.swatch){
+    min-width:0;
+    overflow-wrap:break-word;
   }
   .swatch{ width:11px;height:11px;border-radius:3px; display:inline-block; flex-shrink:0; }
 
@@ -577,7 +588,9 @@
     .river-content{ flex-wrap:wrap; }
     .river-name{ font-size:1.02rem; gap:9px; }
     .river-points{ font-size:1.12rem; padding:5px 12px; }
-    .leader-strip{ grid-template-columns:1fr 1fr; gap:9px; }
+    .leader-strip{ grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:9px; }
+    .leader-chip{ padding:10px 10px; }
+    .leader-chip .who{ font-size:0.92rem; }
     .leader-chip{ padding:11px 12px; }
 
     /* --- Filters become a bottom sheet, opened via trigger --- */
@@ -667,7 +680,7 @@
   <div id="home" class="tab-content active">
     <div class="card">
       <h2>House Leaderboard</h2>
-      <div class="sub">Points from individual events only · 1st = 5, 2nd = 3, 3rd = 1</div>
+      <div style="height:14px;"></div>
       <div id="leaderboard" class="leaderboard">
         <div class="loading-text">Filling the rivers…</div>
       </div>
